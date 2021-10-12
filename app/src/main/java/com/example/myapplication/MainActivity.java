@@ -47,6 +47,7 @@ public class MainActivity extends AppCompatActivity {
     int num;
     int answered;
     int points;
+    final Handler handler = new Handler(Looper.getMainLooper());
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,21 +59,21 @@ public class MainActivity extends AppCompatActivity {
         name = bundle.getString("Nombre");
 
         //Fill questions
-        questAnsw[0][0] = "";        questAnsw[0][1] = "";        questAnsw[0][2] = "";        questAnsw[0][3] = "";        questAnsw[0][4] = "";
-        questAnsw[1][0] = "";        questAnsw[1][1] = "";        questAnsw[1][2] = "";        questAnsw[1][3] = "";        questAnsw[1][4] = "";
-        questAnsw[2][0] = "";        questAnsw[2][1] = "";        questAnsw[2][2] = "";        questAnsw[2][3] = "";        questAnsw[2][4] = "";
-        questAnsw[3][0] = "";        questAnsw[3][1] = "";        questAnsw[3][2] = "";        questAnsw[3][3] = "";        questAnsw[3][4] = "";
-        questAnsw[4][0] = "";        questAnsw[4][1] = "";        questAnsw[4][2] = "";        questAnsw[4][3] = "";        questAnsw[4][4] = "";
-        questAnsw[5][0] = "";        questAnsw[5][1] = "";        questAnsw[5][2] = "";        questAnsw[5][3] = "";        questAnsw[5][4] = "";
-        questAnsw[6][0] = "";        questAnsw[6][1] = "";        questAnsw[6][2] = "";        questAnsw[6][3] = "";        questAnsw[6][4] = "";
-        questAnsw[7][0] = "";        questAnsw[7][1] = "";        questAnsw[7][2] = "";        questAnsw[7][3] = "";        questAnsw[7][4] = "";
-        questAnsw[8][0] = "";        questAnsw[8][1] = "";        questAnsw[8][2] = "";        questAnsw[8][3] = "";        questAnsw[8][4] = "";
-        questAnsw[9][0] = "";        questAnsw[9][1] = "";        questAnsw[9][2] = "";        questAnsw[9][3] = "";        questAnsw[9][4] = "";
+        questAnsw[0][0] = "Próximo juego numerado de Final Fantasy";            questAnsw[0][1] = "XVI";                            questAnsw[0][2] = "XXI";                    questAnsw[0][3] = "XV";                         questAnsw[0][4] = "XVIII";
+        questAnsw[1][0] = "Franquicias unidas para crear Kingdom Hearts";       questAnsw[1][1] = "Final Fantasy y Dragon Quest";   questAnsw[1][2] = "Final Fantasy y Disney"; questAnsw[1][3] = "Final Fantasy y Dreamworks"; questAnsw[1][4] = "Final Fantasy y Children of Mana";
+        questAnsw[2][0] = "Origen de la infección en The Last Of Us";           questAnsw[2][1] = "Virus de la rabia";              questAnsw[2][2] = "Virus de laboratorio";   questAnsw[2][3] = "Hongo Cordyceps";            questAnsw[2][4] = "Brebaje Voodoo";
+        questAnsw[3][0] = "Dinosaurio más grande en Jurassic World Evolution";  questAnsw[3][1] = "Brachiosaurus";                  questAnsw[3][2] = "Mosasaurus";             questAnsw[3][3] = "Indominus Rex";              questAnsw[3][4] = "Dreadnoughtus";
+        questAnsw[4][0] = "Quién NO es una princesa";                           questAnsw[4][1] = "Pauline";                        questAnsw[4][2] = "Zelda";                  questAnsw[4][3] = "Daisy";                      questAnsw[4][4] = "Estela";
+        questAnsw[5][0] = "Cuál no ha sido desarrollado por Rocksteady";        questAnsw[5][1] = "Batman Arkham Knight";           questAnsw[5][2] = "Batman Arkham Origin";   questAnsw[5][3] = "Batman Arkham City";         questAnsw[5][4] = "Suicide Squad: Kill the Justice League";
+        questAnsw[6][0] = "Cuántos juegos componen la saga Infamous";           questAnsw[6][1] = "2";                              questAnsw[6][2] = "3";                      questAnsw[6][3] = "4";                          questAnsw[6][4] = "5";
+        questAnsw[7][0] = "Donde aparece esta bandera";                         questAnsw[7][1] = "Super Mario Bros";               questAnsw[7][2] = "Mario y Luigi";          questAnsw[7][3] = "Animal Crossing";            questAnsw[7][4] = "The Legend Of Zelda";
+        questAnsw[8][0] = "Juego al que pertenece este objeto";                 questAnsw[8][1] = "Jak & Daxter";                   questAnsw[8][2] = "Ratchet & Clank";        questAnsw[8][3] = "Crash Bandicoot";            questAnsw[8][4] = "Spyro";
+        questAnsw[9][0] = "Nombre del siguiente personaje";                     questAnsw[9][1] = "Estrellita";                     questAnsw[9][2] = "Destello";               questAnsw[9][3] = "Lucecita";                   questAnsw[9][4] = "Brillante";
 
 
         //Fill image questions
         questImgArray[0] = R.drawable.wind_waker_flag;
-        questImgArray[1] = R.drawable.mario_bros;
+        questImgArray[1] = R.drawable.precursor;
         questImgArray[2] = R.drawable.destello;
 
         //Fill correct questions
@@ -121,13 +122,14 @@ public class MainActivity extends AppCompatActivity {
                 num++;
                 //If not all questions are answered, update them
                 if(num < 10){
-                    UpdateQuestions(num);
+                    handler.postDelayed(() -> UpdateQuestions(num), 500);
+
                 }else {
                     //If all questions are answered, go to score
                     Intent punt = new Intent(MainActivity.this, Results.class);
                     punt.putExtra("Nombre", name);
                     punt.putExtra("Puntuacion", points);
-                    startActivity(punt);
+                    handler.postDelayed(() -> startActivity(punt), 500);
                 }
             }
         });
@@ -162,9 +164,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void CheckAnswer(int num, int answered){
 
-        final Handler handler = new Handler(Looper.getMainLooper());
-        //corrTxt.setVisibility(View.VISIBLE);
-
         //Answered correctly
         if(answered == correctAns[num]){
 
@@ -183,22 +182,22 @@ public class MainActivity extends AppCompatActivity {
             switch(answered){
                 case 0:
                     ansBut1.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(() -> ansBut1.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
+                    handler.postDelayed(() -> ansBut1.setBackgroundColor(getResources().getColor(R.color.transparent)), 500);
                 break;
 
                 case 1:
                     ansBut2.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(() -> ansBut2.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
+                    handler.postDelayed(() -> ansBut2.setBackgroundColor(getResources().getColor(R.color.transparent)), 500);
                 break;
 
                 case 2:
                     ansBut3.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(() -> ansBut3.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
+                    handler.postDelayed(() -> ansBut3.setBackgroundColor(getResources().getColor(R.color.transparent)), 500);
                 break;
 
                 case 3:
                     ansBut4.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(() -> ansBut4.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
+                    handler.postDelayed(() -> ansBut4.setBackgroundColor(getResources().getColor(R.color.transparent)), 500);
                 break;
             }
         }
@@ -208,41 +207,41 @@ public class MainActivity extends AppCompatActivity {
             case 0:
                 ansBut1.setBackgroundColor(getResources().getColor(R.color.green));
                 handler.postDelayed(() -> {
-                    ansBut1.setBackgroundColor(getResources().getColor(R.color.white));
+                    ansBut1.setBackgroundColor(getResources().getColor(R.color.transparent));
                     //Hide texts
                     corrTxt.setVisibility(View.INVISIBLE);
                     wrngTxt.setVisibility(View.INVISIBLE);
-                }, 1000);
+                }, 500);
             break;
 
             case 1:
                 ansBut2.setBackgroundColor(getResources().getColor(R.color.green));
                 handler.postDelayed(() -> {
-                    ansBut2.setBackgroundColor(getResources().getColor(R.color.white));
+                    ansBut2.setBackgroundColor(getResources().getColor(R.color.transparent));
                     //Hide texts
                     corrTxt.setVisibility(View.INVISIBLE);
                     wrngTxt.setVisibility(View.INVISIBLE);
-                }, 1000);
+                }, 500);
             break;
 
             case 2:
                 ansBut3.setBackgroundColor(getResources().getColor(R.color.green));
                 handler.postDelayed(() -> {
-                    ansBut3.setBackgroundColor(getResources().getColor(R.color.white));
+                    ansBut3.setBackgroundColor(getResources().getColor(R.color.transparent));
                     //Hide texts
                     corrTxt.setVisibility(View.INVISIBLE);
                     wrngTxt.setVisibility(View.INVISIBLE);
-                }, 1000);
+                }, 500);
             break;
 
             case 3:
                 ansBut4.setBackgroundColor(getResources().getColor(R.color.green));
                 handler.postDelayed(() -> {
-                    ansBut4.setBackgroundColor(getResources().getColor(R.color.white));
+                    ansBut4.setBackgroundColor(getResources().getColor(R.color.transparent));
                     //Hide texts
                     corrTxt.setVisibility(View.INVISIBLE);
                     wrngTxt.setVisibility(View.INVISIBLE);
-                }, 1000);
+                }, 500);
             break;
         }
 
