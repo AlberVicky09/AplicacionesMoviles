@@ -8,6 +8,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
@@ -16,12 +17,16 @@ public class MainActivity extends AppCompatActivity {
 
     //Quiz list creation
     String [][] questAnsw = new String[10][5];
+    //Image list creation
+    int [] questImgArray = new int[3];
 
     //Correct answers list
     int [] correctAns = new int[10];
 
     //Question Text
     TextView questText;
+    TextView questImgText;
+    ImageView questImg;
 
     //Answer Texts
     RadioButton ansBut1;
@@ -38,6 +43,7 @@ public class MainActivity extends AppCompatActivity {
     TextView wrngTxt;
 
     //Variables
+    String name;
     int num;
     int answered;
     int points;
@@ -47,15 +53,27 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        //Get name from intent
+        Bundle bundle = this.getIntent().getExtras();
+        name = bundle.getString("Nombre");
+
         //Fill questions
-        for(int i = 0; i < 10; i++){
-            for(int j = 0; j < 5; j++){
-                if(j == 0)
-                    questAnsw[i][j] = "Question " + i;
-                else
-                    questAnsw[i][j] = "Answer " + j;
-            }
-        }
+        questAnsw[0][0] = "";        questAnsw[0][1] = "";        questAnsw[0][2] = "";        questAnsw[0][3] = "";        questAnsw[0][4] = "";
+        questAnsw[1][0] = "";        questAnsw[1][1] = "";        questAnsw[1][2] = "";        questAnsw[1][3] = "";        questAnsw[1][4] = "";
+        questAnsw[2][0] = "";        questAnsw[2][1] = "";        questAnsw[2][2] = "";        questAnsw[2][3] = "";        questAnsw[2][4] = "";
+        questAnsw[3][0] = "";        questAnsw[3][1] = "";        questAnsw[3][2] = "";        questAnsw[3][3] = "";        questAnsw[3][4] = "";
+        questAnsw[4][0] = "";        questAnsw[4][1] = "";        questAnsw[4][2] = "";        questAnsw[4][3] = "";        questAnsw[4][4] = "";
+        questAnsw[5][0] = "";        questAnsw[5][1] = "";        questAnsw[5][2] = "";        questAnsw[5][3] = "";        questAnsw[5][4] = "";
+        questAnsw[6][0] = "";        questAnsw[6][1] = "";        questAnsw[6][2] = "";        questAnsw[6][3] = "";        questAnsw[6][4] = "";
+        questAnsw[7][0] = "";        questAnsw[7][1] = "";        questAnsw[7][2] = "";        questAnsw[7][3] = "";        questAnsw[7][4] = "";
+        questAnsw[8][0] = "";        questAnsw[8][1] = "";        questAnsw[8][2] = "";        questAnsw[8][3] = "";        questAnsw[8][4] = "";
+        questAnsw[9][0] = "";        questAnsw[9][1] = "";        questAnsw[9][2] = "";        questAnsw[9][3] = "";        questAnsw[9][4] = "";
+
+
+        //Fill image questions
+        questImgArray[0] = R.drawable.wind_waker_flag;
+        questImgArray[1] = R.drawable.mario_bros;
+        questImgArray[2] = R.drawable.destello;
 
         //Fill correct questions
         correctAns[0] = 0;
@@ -71,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
 
         //Find screen objects
         questText = findViewById(R.id.questionText);
+        questImgText = findViewById(R.id.imgQstntxt);
+        questImg = findViewById(R.id.imgQstn);
         ansBut1 = findViewById(R.id.rdBtn1);
         ansBut2 = findViewById(R.id.rdBtn2);
         ansBut3 = findViewById(R.id.rdBtn3);
@@ -87,46 +107,27 @@ public class MainActivity extends AppCompatActivity {
         UpdateQuestions(num);
 
         //Control answer clicked
-        ansBut1.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                answered = 0;
-            }
-        });
-        ansBut2.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                answered = 1;
-            }
-        });
-        ansBut3.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                answered = 2;
-            }
-        });
-        ansBut4.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                answered = 3;
-            }
-        });
+        ansBut1.setOnClickListener(view -> answered = 0);
+        ansBut2.setOnClickListener(view -> answered = 1);
+        ansBut3.setOnClickListener(view -> answered = 2);
+        ansBut4.setOnClickListener(view -> answered = 3);
+
         //Skip button
         Button contBut = findViewById(R.id.contBut);
-        contBut.setOnClickListener(new View.OnClickListener(){
-            public void onClick(View v){
-                //If bool is active, answer has been pressed
-                if(ansGroup.getCheckedRadioButtonId() != -1){
-                    CheckAnswer(num, answered);
-                    num++;
-                    //If not all questions are answered, update them
-                    if(num < 10){
-                        UpdateQuestions(num);
-                    }else {
-                        //If all questions are answered, go to score
-                        Intent i = new Intent(MainActivity.this, ScoreActivity.class);
-                        startActivity(i);
-                    }
+        contBut.setOnClickListener(v -> {
+            //If bool is active, answer has been pressed
+            if(ansGroup.getCheckedRadioButtonId() != -1){
+                CheckAnswer(num, answered);
+                num++;
+                //If not all questions are answered, update them
+                if(num < 10){
+                    UpdateQuestions(num);
+                }else {
+                    //If all questions are answered, go to score
+                    Intent punt = new Intent(MainActivity.this, Results.class);
+                    punt.putExtra("Nombre", name);
+                    punt.putExtra("Puntuacion", points);
+                    startActivity(punt);
                 }
             }
         });
@@ -134,7 +135,24 @@ public class MainActivity extends AppCompatActivity {
 
     public void UpdateQuestions(int num){
         answered = -1;
-        questText.setText(questAnsw[num][0]);
+        if(num < 7){
+            //Text questions
+            questText.setVisibility(View.VISIBLE);
+            questText.setText(questAnsw[num][0]);
+
+            questImg.setVisibility(View.INVISIBLE);
+            questImgText.setVisibility(View.INVISIBLE);
+
+        }else{
+            //Image questions
+            questText.setVisibility(View.INVISIBLE);
+
+            questImg.setVisibility(View.VISIBLE);
+            questImgText.setVisibility(View.VISIBLE);
+
+            questImg.setImageResource(questImgArray[num-7]);
+            questImgText.setText(questAnsw[num][0]);
+        }
         ansGroup.clearCheck();
         ansBut1.setText(questAnsw[num][1]);
         ansBut2.setText(questAnsw[num][2]);
@@ -165,42 +183,22 @@ public class MainActivity extends AppCompatActivity {
             switch(answered){
                 case 0:
                     ansBut1.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ansBut1.setBackgroundColor(getResources().getColor(R.color.white));
-                        }
-                    }, 1000);
+                    handler.postDelayed(() -> ansBut1.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
                 break;
 
                 case 1:
                     ansBut2.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ansBut2.setBackgroundColor(getResources().getColor(R.color.white));
-                        }
-                    }, 1000);
+                    handler.postDelayed(() -> ansBut2.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
                 break;
 
                 case 2:
                     ansBut3.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ansBut3.setBackgroundColor(getResources().getColor(R.color.white));
-                        }
-                    }, 1000);
+                    handler.postDelayed(() -> ansBut3.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
                 break;
 
                 case 3:
                     ansBut4.setBackgroundColor(getResources().getColor(R.color.red));
-                    handler.postDelayed(new Runnable() {
-                        @Override
-                        public void run() {
-                            ansBut4.setBackgroundColor(getResources().getColor(R.color.white));
-                        }
-                    }, 1000);
+                    handler.postDelayed(() -> ansBut4.setBackgroundColor(getResources().getColor(R.color.white)), 1000);
                 break;
             }
         }
@@ -209,57 +207,46 @@ public class MainActivity extends AppCompatActivity {
         switch(correctAns[num]){
             case 0:
                 ansBut1.setBackgroundColor(getResources().getColor(R.color.green));
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ansBut1.setBackgroundColor(getResources().getColor(R.color.white));
-                        //Hide texts
-                        corrTxt.setVisibility(View.INVISIBLE);
-                        wrngTxt.setVisibility(View.INVISIBLE);
-                    }
+                handler.postDelayed(() -> {
+                    ansBut1.setBackgroundColor(getResources().getColor(R.color.white));
+                    //Hide texts
+                    corrTxt.setVisibility(View.INVISIBLE);
+                    wrngTxt.setVisibility(View.INVISIBLE);
                 }, 1000);
             break;
 
             case 1:
                 ansBut2.setBackgroundColor(getResources().getColor(R.color.green));
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ansBut2.setBackgroundColor(getResources().getColor(R.color.white));
-                        //Hide texts
-                        corrTxt.setVisibility(View.INVISIBLE);
-                        wrngTxt.setVisibility(View.INVISIBLE);
-                    }
+                handler.postDelayed(() -> {
+                    ansBut2.setBackgroundColor(getResources().getColor(R.color.white));
+                    //Hide texts
+                    corrTxt.setVisibility(View.INVISIBLE);
+                    wrngTxt.setVisibility(View.INVISIBLE);
                 }, 1000);
             break;
 
             case 2:
                 ansBut3.setBackgroundColor(getResources().getColor(R.color.green));
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ansBut3.setBackgroundColor(getResources().getColor(R.color.white));
-                        //Hide texts
-                        corrTxt.setVisibility(View.INVISIBLE);
-                        wrngTxt.setVisibility(View.INVISIBLE);
-                    }
+                handler.postDelayed(() -> {
+                    ansBut3.setBackgroundColor(getResources().getColor(R.color.white));
+                    //Hide texts
+                    corrTxt.setVisibility(View.INVISIBLE);
+                    wrngTxt.setVisibility(View.INVISIBLE);
                 }, 1000);
             break;
 
             case 3:
                 ansBut4.setBackgroundColor(getResources().getColor(R.color.green));
-                handler.postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        ansBut4.setBackgroundColor(getResources().getColor(R.color.white));
-                        //Hide texts
-                        corrTxt.setVisibility(View.INVISIBLE);
-                        wrngTxt.setVisibility(View.INVISIBLE);
-                    }
+                handler.postDelayed(() -> {
+                    ansBut4.setBackgroundColor(getResources().getColor(R.color.white));
+                    //Hide texts
+                    corrTxt.setVisibility(View.INVISIBLE);
+                    wrngTxt.setVisibility(View.INVISIBLE);
                 }, 1000);
             break;
         }
 
-        answered = -1;
+        //answered = -1;
     }
+
 }
