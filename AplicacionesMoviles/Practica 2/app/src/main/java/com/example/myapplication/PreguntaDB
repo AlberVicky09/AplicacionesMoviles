@@ -1,0 +1,11 @@
+package com.example.myapplication;
+
+import android.arch.persistence.room.Database;
+import android.arch.persistence.room.RoomDatabase;
+
+import com.example.myapplication.Pregunta;
+
+@Database(entities = {Pregunta.class}, version = 1)
+public abstract class PreguntaDB extends RoomDatabase{
+    public abstract PreguntaDao getPreguntaDao();
+}
